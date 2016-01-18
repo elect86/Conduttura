@@ -5,7 +5,9 @@
  */
 package components;
 
+import java.nio.Buffer;
 import java.util.HashMap;
+import jglm.Vec2;
 import jglm.Vec3;
 
 /**
@@ -22,8 +24,26 @@ public class VertexAttributeSet {
         setVertices(vertices, count, true);
     }
 
+    public void setNormals(Vec3[] normals, int count) {
+        setNormals(normals, count, true);
+    }
+
+    public void setTexCoords(int unit, Vec2[] coords, int count) {
+        setTexCoords(unit, coords, count, true);
+    }
+
     public void setVertices(Vec3[] vertices, int count, boolean enable) {
         setVertexData(VertexAttributeId.POSITION, 3, DataType.FLOAT_32, vertices, 0, count, enable);
+    }
+
+    public void setNormals(Vec3[] normals, int count, boolean enable) {
+        setVertexData(VertexAttributeId.NORMAL, 3, DataType.FLOAT_32, normals, 0, count, enable);
+    }
+
+    public void setTexCoords(int unit, Vec2[] coords, int count, boolean enable) {
+        assert (unit < 8);
+        VertexAttributeId attrib = VertexAttributeId.values()[VertexAttributeId.TEXCOORD0.value + unit];
+        setVertexData(attrib, 3, DataType.FLOAT_32, coords, 0, count, enable);
     }
 
     public void setVertexData(VertexAttributeId attrib, int size, DataType type, Vec3[] data, int stride,
@@ -40,15 +60,29 @@ public class VertexAttributeSet {
         VertexAttributeId attrIndex = attribIndex(attrib);
 
         VertexAttribute it;
-        
+
 //        if (vattribs.containsKey(attrIndex.value)) {
-            /**
-             * TODO, append data to existing vertexAttribute.
-             */
+        /**
+         * TODO, append data to existing vertexAttribute.
+         */
 //        } else {
-            it = new VertexAttribute();
+        it = new VertexAttribute();
 //        }
-        it.
+        it.setData(size, type, data, stride, count);
+        setEnabled(attrib.value, enable);
+    }
+
+    public void setVertexData(VertexAttributeId attrib, int size, DataType type, Buffer data, int stride,
+            int count, boolean enable) {
+
+        
+    }
+
+    private void setEnabled(int attrib, boolean enable) {
+        assert (attrib >= VertexAttributeId.POSITION.value && attrib <= VertexAttributeId.ATTR15.value);
+
+        enableFlags &= ~(1 << attrib);
+        enableFlags |= ((enable ? 1 : 0) << attrib);
     }
 
     private VertexAttributeId attribIndex(VertexAttributeId attrib) {

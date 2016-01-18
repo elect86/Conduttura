@@ -8,6 +8,8 @@ package components;
 import com.jogamp.opengl.util.GLBuffers;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import jglm.Vec3;
 
 /**
  *
@@ -25,6 +27,17 @@ public class VertexAttribute {
 
     public VertexAttribute() {
         type = DataType.UNKNOWN;
+    }
+
+    public void setData(int size, DataType type, Vec3[] data, int stride, int count) {
+
+        FloatBuffer dataBuffer = FloatBuffer.allocate(data.length * 3);
+        for (Vec3 v : data) {
+            dataBuffer.put(v.toFloatArray());
+        }
+        dataBuffer.rewind();
+        
+        setData(size, type, dataBuffer, stride, count);
     }
 
     public void setData(int size, DataType type, Buffer data, int stride, int count) {
